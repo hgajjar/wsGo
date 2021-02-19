@@ -1,0 +1,12 @@
+name: "Billy"
+greeting: "Howdy"
+command('hello -name=<name> -email=<email> there'): |
+  echo "Hello <name>";
+#command('state (enable|disable)'): |
+#  echo "Hello ={ input.command(1) }";
+#command('hello <name>'):
+#  env:
+#    NAME: = input.argument('name')
+#  exec: |
+#    #!bash
+#    echo -n "hello ${NAME}"
