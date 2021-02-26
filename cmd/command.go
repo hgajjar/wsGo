@@ -3,12 +3,14 @@ package cmd
 import (
 	"fmt"
 	"github.com/hgajjar/wsGo/types"
+	"github.com/hgajjar/wsGo/types/command"
 	"github.com/spf13/cobra"
 	"os/exec"
 	"strings"
 )
 
-func buildCommand(commandType types.Command) *cobra.Command {
+func buildCommand(configType types.ConfigType) *cobra.Command {
+	commandType := configType.(*command.Command)
 	var cobraCommand = &cobra.Command{
 		Use: commandType.Name(),
 		Short: commandType.Usage(),

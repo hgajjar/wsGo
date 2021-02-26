@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"bytes"
-	"github.com/hgajjar/wsGo/types"
+	"github.com/hgajjar/wsGo/types/command"
 	"io/ioutil"
 	"testing"
 )
@@ -10,10 +10,10 @@ import (
 func TestBuildCommand(t *testing.T) {
 	flagValue := "there"
 
-	flags := []*types.Flag{
-		types.NewFlag("name", "", "", nil),
+	flags := []*command.Flag{
+		command.NewFlag("name", "", "", nil),
 	}
-	cmdType := types.NewCommand("hello", "", flags, "echo \"Hello <name>\";")
+	cmdType := command.NewCommand("hello", "", flags, "echo \"Hello <name>\";")
 
 	cmd := buildCommand(cmdType)
 	buffer := bytes.NewBufferString("")

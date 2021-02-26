@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"github.com/hgajjar/wsGo/factory"
 	"github.com/hgajjar/wsGo/types"
+	"github.com/hgajjar/wsGo/types/command"
 	"github.com/spf13/viper"
 )
 
@@ -9,10 +11,7 @@ func init() {
 	InitConfig()
 
 	loader := configLoader{
-		types: []types.ConfigType{
-			types.Attribute{},
-			types.Command{},
-		},
+		types: factory.GetAvailableConfigTypes(),
 	}
 
 	loader.loadConfig()
@@ -23,29 +22,25 @@ type configLoader struct {
 }
 
 func (loader configLoader) loadConfig() {
-	definitions := loader.getDefinitions()
-	loader.loadCommands(definitions)
+	loader.parseTypes()
+	loader.loadCommands()
 }
 
-func (loader configLoader) getDefinitions() []types.Definition {
-	var definitions []types.Definition
-
+func (loader configLoader) parseTypes() {
 	for _, key := range viper.AllKeys() {
 		for _, configType := range loader.types {
 			if !configType.IsValid(key) {
 				continue
 			}
-			definitions = append(definitions, configType.Parse(key, viper.GetString(key)))
+			configType.Parse(key, viper.GetString(key))
 		}
 	}
-
-	return definitions
 }
 
-func (loader configLoader) loadCommands(defns []types.Definition) {
-	for _, defn := range defns {
-		if cmd, err := defn.Command(); err == nil {
-			rootCmd.AddCommand(buildCommand(cmd))
+func (loader configLoader) loadCommands() {
+	for _, configType := range loader.types {
+		if configType.Type() == command.TYPE {
+			rootCmd.AddCommand(buildCommand(configType))
 		}
 	}
 }

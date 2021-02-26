@@ -1,10 +1,13 @@
-package types
+package command
 
 import (
 	"fmt"
+	"github.com/hgajjar/wsGo/util"
 	"regexp"
 	"strings"
 )
+
+const TYPE = "command"
 
 type Command struct {
 	name string
@@ -15,6 +18,10 @@ type Command struct {
 
 func NewCommand(name string, usage string, flags []*Flag, script string) Command {
 	return Command{name: name, usage: usage, flags: flags, script: script}
+}
+
+func (c Command) Type() string {
+	return TYPE
 }
 
 type Flag struct {
@@ -32,7 +39,7 @@ var cmdRegex = regexp.MustCompile(`['|"]([a-z]+)(.*)['|"]`)
 var flagRegex = regexp.MustCompile(`-([a-z]+)=`)
 
 func (c Command) IsValid(key string) bool {
-	tokens := tokenize(key)
+	tokens := util.Tokenize(key)
 
 	if len(tokens) <= 1 || tokens[0] != "command" {
 		return false
@@ -45,8 +52,8 @@ func (c Command) IsValid(key string) bool {
 	return true
 }
 
-func (c Command) Parse(key string, value string) Definition {
-	tokens := tokenize(key)
+func (c *Command) Parse(key string, value string) {
+	tokens := util.Tokenize(key)
 	cmdParts := cmdRegex.FindStringSubmatch(tokens[1])
 
 	name := cmdParts[1]
@@ -63,14 +70,10 @@ func (c Command) Parse(key string, value string) Definition {
 		}
 	}
 
-	return Definition{
-		command: Command{
-			name:   name,
-			usage:  usage,
-			flags:  flags,
-			script: value,
-		},
-	}
+	c.name = name
+	c.usage = usage
+	c.flags = flags
+	c.script = value
 }
 
 func (c Command) Name() string {

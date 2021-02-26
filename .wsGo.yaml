@@ -10,3 +10,6 @@ command('hello -name=<name> -email=<email> there'): |
 #  exec: |
 #    #!bash
 #    echo -n "hello ${NAME}"
+confd('/'):
+  - { src: test1.txt.tmpl, dst: test1.txt }
+  - { src: test2.txt.tmpl, dst: test2.txt }
